@@ -36,25 +36,25 @@ viz_Rt <- function(now_estimates, adm_names){
 
     # Plot forecast - these are the estimates for the tested cases that are assumed to be fully reported
     # Add three weeks for a two week projection so that points connect (colouring by a variable breaks the timeseries)
-    geom_line(data = subset(plot_weekly, forecast == 1), aes(y = median), alpha = 1, colour = "#8da0cb") +
+    geom_line(data = subset(plot_weekly, forecast == 1), aes(y = median), alpha = 1, colour = "#7570B3") +
     geom_ribbon(data = subset(plot_weekly, forecast == 1), aes(ymin = lower_20, ymax = upper_20,  fill = "Forecast"), alpha = 0.4) +
-    geom_ribbon(data = subset(plot_weekly, forecast == 1), aes(ymin = lower_50, ymax = upper_50), alpha = 0.3, fill = "#8da0cb") +
-   # geom_ribbon(data = subset(plot_weekly, forecast == 1), aes(ymin = lower_90, ymax = upper_90), alpha = 0.2, fill = "#8da0cb") +
+    geom_ribbon(data = subset(plot_weekly, forecast == 1), aes(ymin = lower_50, ymax = upper_50), alpha = 0.3, fill = "#7570B3") +
+   # geom_ribbon(data = subset(plot_weekly, forecast == 1), aes(ymin = lower_90, ymax = upper_90), alpha = 0.2, fill = "#7570B3") +
 
 
     # Separate out partial reported - this comes from the reporting delay distribution so
     # needs to be extracted from the estimates and then pad either side for continuous
     # representation
-    geom_line(data = subset(plot_weekly, partial == 1), aes(y = median), alpha = 1, colour = "#fc8d62") +
+    geom_line(data = subset(plot_weekly, partial == 1), aes(y = median), alpha = 1, colour = "#D95F02") +
     geom_ribbon(data = subset(plot_weekly, partial == 1), aes(ymin = lower_20, ymax = upper_20,  fill = "Nowcast"), alpha = 0.6) +
-    geom_ribbon(data = subset(plot_weekly, partial == 1), aes(ymin = lower_50, ymax = upper_50), alpha = 0.5, fill = "#fc8d62") +
-  #  geom_ribbon(data = subset(plot_weekly, partial == 1), aes(ymin = lower_90, ymax = upper_90), alpha = 0.4, fill = "#fc8d62") +
+    geom_ribbon(data = subset(plot_weekly, partial == 1), aes(ymin = lower_50, ymax = upper_50), alpha = 0.5, fill = "#D95F02") +
+  #  geom_ribbon(data = subset(plot_weekly, partial == 1), aes(ymin = lower_90, ymax = upper_90), alpha = 0.4, fill = "#D95F02") +
 
     # Set colour for incidence
-    geom_line(data = subset(plot_weekly, type == "estimate"), aes(y = median), alpha = 1, colour = "#66c2a5") +
+    geom_line(data = subset(plot_weekly, type == "estimate"), aes(y = median), alpha = 1, colour = "#1B9E77") +
     geom_ribbon(data = subset(plot_weekly, type == "estimate"), aes(ymin = lower_20, ymax = upper_20, fill = "Estimate"), alpha = 0.3) +
-    geom_ribbon(data = subset(plot_weekly, type == "estimate"), aes(ymin = lower_50, ymax = upper_50), alpha = 0.2, fill = "#66c2a5") +
-   # geom_ribbon(data = subset(plot_weekly, type == "estimate"), aes(ymin = lower_90, ymax = upper_90), alpha = 0.1, fill = "#66c2a5") +
+    geom_ribbon(data = subset(plot_weekly, type == "estimate"), aes(ymin = lower_50, ymax = upper_50), alpha = 0.2, fill = "#1B9E77") +
+   # geom_ribbon(data = subset(plot_weekly, type == "estimate"), aes(ymin = lower_90, ymax = upper_90), alpha = 0.1, fill = "#1B9E77") +
 
     # Add an intercept at each section
     geom_vline(data = plot_weekly, aes(xintercept = (max(date[type == "estimate based on partial data"]))), linetype = 2) +
@@ -75,7 +75,7 @@ viz_Rt <- function(now_estimates, adm_names){
     scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1),
           legend.position = "bottom") +
-    scale_fill_manual(values = c("Estimate" = "#66c2a5", "Nowcast" = "#fc8d62", "Forecast" = "#8da0cb"))
+    scale_fill_manual(values = c("Estimate" = "#1B9E77", "Nowcast" = "#D95F02", "Forecast" = "#7570B3"))
 
 
 
