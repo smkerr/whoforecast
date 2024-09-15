@@ -58,7 +58,7 @@ get_nowcast <- function(data_rep,
 
   if(nowcast == TRUE){
 
-     delays <- delay_opts(incubation_period, reporting_delay)
+     delays <- delay_opts(incubation_period + reporting_delay)
 
       }else{
 
