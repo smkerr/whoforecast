@@ -73,7 +73,7 @@ get_nowcast <- function(data_rep,
     generation_time = generation_time_opts(generation_time),
     delays = delays,
     rt = rt_estor,
-    obs = obs_opts(week_effect = week_effect),
+    obs = obs_opts(week_effect = week_effect, na = "accumulate"),
     gp = NULL,
     horizon = horizon,
     stan = stan_opts(cores = 4, warmup = 250, samples = 1000))
