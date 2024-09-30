@@ -12,11 +12,8 @@
 #'@import lubridate
 #'@import tibble
 #'@export
-viz_reported_week <- function(now_estimates, adm_names){
+viz_reported_week <- function(now_estimates, adm_names, reporting_freq){
 
-  # Post processing
-
-  # Generate week variable for matching - may not be needed but leave here for now
   plot_weekly_obs <- now_estimates$estimates$observations %>%
     mutate(
       year = year(date),
@@ -27,18 +24,14 @@ viz_reported_week <- function(now_estimates, adm_names){
   # Generate weekly level reported case estimates by date of report
   # and combine with observations
 
-  rep_estimates <- as_tibble(now_estimates$estimates$summarised) %>% filter(variable == "reported_cases")
-
   plot_weekly <- now_estimates$estimated_reported_cases$summarised %>%
     rename(type_var = type) %>% # rename to keep other type variable which we want
-    left_join(., rep_estimates) %>%
+    left_join(., now_estimates$estimates$summarised[variable == "reported_cases"]) %>%
     mutate(
       year = year(date),
       month = month(date),
       week = week(date + days(3))
     ) %>%
-    #group_by(week) %>%
-    filter(median != 0) %>%
     full_join(., plot_weekly_obs) %>%
     as.data.frame(.) %>%
     mutate(
@@ -47,9 +40,6 @@ viz_reported_week <- function(now_estimates, adm_names){
       forecast =  ifelse(type == "forecast", 1, 0),
       forecast =  ifelse(lag(forecast) == 1 | lead(forecast) == 1, 1, forecast),
     )
-
-
-  # Plot cases by reporting figure - need to clean and reduce this
 
   rep_week_fig <-
     ggplot(data = plot_weekly, aes(x = date)) +
@@ -92,7 +82,7 @@ viz_reported_week <- function(now_estimates, adm_names){
     ) +
 
     guides(fill = guide_legend(title = ""), colour = guide_legend(title = "")) +
-    scale_x_date(date_breaks = "1 week", date_labels = "%b %d") +
+    scale_x_date(date_breaks = "1 month", date_labels = "%b %d") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1),
           legend.position = "bottom") +
     scale_fill_manual(values = c("Estimate" = "#1B9E77", "Nowcast" = "#D95F02", "Forecast" = "#7570B3"))

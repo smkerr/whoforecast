@@ -9,6 +9,7 @@ params:
   model_ests: NULL
   adm_names: NULL
   horizon: NULL
+  reporting_freq: NULL
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
@@ -21,6 +22,7 @@ model_ests <- params$model_ests
 adm_names <- params$adm_names
 timeseries <- params$data_rep
 horizon <- params$horizon
+reporting_freq <- params$reporting_freq
 
 ```
 
@@ -51,7 +53,7 @@ timeseries %>%
   labs(title = "Case counts",
        x = "Date",
        y = "Cases") +
-  scale_x_date(date_breaks = "1 week", date_minor_breaks = "1 week", date_labels = "%d %b \n%Y") +
+  scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week", date_labels = "%d %b \n%Y") +
   whotools::theme_who()
 
 ```
@@ -74,11 +76,11 @@ viz_Rt(model_ests, adm_names)
 The number of cases in the next `r horizon` days is estimated to be `r round(model_ests$estimates$summarised %>% filter(variable == "reported_cases") %>% filter(type == "forecast") %>% summarize(sum(median)))` (`r round(model_ests$estimates$summarised %>% filter(variable == "reported_cases") %>% filter(type == "forecast") %>% summarize(sum(lower_50)))`, `r round(model_ests$estimates$summarised %>% filter(variable == "reported_cases") %>% filter(type == "forecast") %>% summarize(sum(upper_50)))`). The trend is shown in Figure 3.
 
 
-```{r, fig.cap = "Fig 3 Estimated reported cases", fig.height=4, fig.width=6}
+```{r, fig.cap = "Fig 3 Estimated reported cases on a daily scale", fig.height=4, fig.width=6}
 
 rep_ests <- model_ests$estimates$summarised %>% filter(variable == "reported_cases") 
 
-viz_reported_week(model_ests, adm_names)
+viz_reported_week(model_ests, adm_names, reporting_freq)
 
 ```
 

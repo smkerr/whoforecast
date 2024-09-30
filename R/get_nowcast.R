@@ -28,8 +28,8 @@ get_nowcast <- function(data_rep,
                         incubation_period,
                         reporting_delay,
                         horizon,
-                        nowcast = FALSE,
                         reporting_freq = "weekly",
+                        week_effect = TRUE,
                         adm_level = adm_level,
                         date_from = min(data_rep$date),
                         create_report = TRUE){
@@ -44,19 +44,17 @@ get_nowcast <- function(data_rep,
 
   if(reporting_freq == "daily"){
 
-    week_effect <- FALSE
     rt_estor <- rt_opts(pop = 1000000, future = "latest")
 
     } else if(reporting_freq == "weekly"){
 
-      week_effect <- TRUE
       rt_estor <- rt_opts(prior = list(mean = 2, sd = 0.2), rw = 7, pop = 1000000, future = "latest")
 
       } else {
        message("Reporting frequency not recognised. Please specify 'daily' or 'weekly'")
      }
 
-  if(nowcast == TRUE){
+  if(!is.null(reporting_delay)){
 
      delays <- delay_opts(incubation_period + reporting_delay)
 
@@ -91,17 +89,8 @@ get_nowcast <- function(data_rep,
 
   }
 
-
-  #ad hoc temporary fix for the problem with the weekly estimator
-  if(reporting_freq == "weekly"){
-
-    model_ests$estimates$summarised <-
-      model_ests$estimates$summarised %>% filter(date %in% dates_obs | type == "forecast")
-
-  }
-
   model_ests$fig_Rt <- viz_Rt(model_ests, paste(adm_names))
-  model_ests$fig_reported <- viz_reported_week(model_ests, paste(adm_names))
+  model_ests$fig_reported <- viz_reported_week(model_ests, paste(adm_names), reporting_freq)
 
   if(create_report){
 
@@ -109,7 +98,11 @@ get_nowcast <- function(data_rep,
 
     output_file <- rmarkdown::render(
       report_path,
-      params = list(model_ests = model_ests, adm_names = adm_names, data_rep = data_rep, horizon = horizon)
+      params = list(model_ests = model_ests,
+                    adm_names = adm_names,
+                    data_rep = data_rep,
+                    horizon = horizon,
+                    reporting_freq = reporting_freq)
     )
 
     # Automatically open the rendered document
